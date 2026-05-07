@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Sparkles } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+import { useAuth } from "@/lib/auth-context";
 
 const links = [
   { href: "#features", label: "Features" },
@@ -11,6 +13,7 @@ const links = [
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const { user } = useAuth();
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
     onScroll();
@@ -44,12 +47,12 @@ export function Navbar() {
         </div>
         <div className="flex items-center gap-2">
           <ThemeSwitcher />
-          <a
-            href="#pricing"
+          <Link
+            to={user ? "/chat" : "/auth"}
             className="glow-button hidden rounded-full px-5 py-2 text-sm font-medium md:inline-block"
           >
-            Get Nexio
-          </a>
+            {user ? "Open Nexio" : "Get Nexio"}
+          </Link>
         </div>
       </nav>
     </header>
