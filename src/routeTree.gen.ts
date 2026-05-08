@@ -13,6 +13,7 @@ import { Route as ChatRouteImport } from './routes/chat'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppFlashcardsRouteImport } from './routes/app.flashcards'
 
 const ChatRoute = ChatRouteImport.update({
   id: '/chat',
@@ -34,17 +35,24 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/app/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppFlashcardsRoute = AppFlashcardsRouteImport.update({
+  id: '/app/flashcards',
+  path: '/app/flashcards',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
+  '/app/flashcards': typeof AppFlashcardsRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
+  '/app/flashcards': typeof AppFlashcardsRoute
   '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
+  '/app/flashcards': typeof AppFlashcardsRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/chat' | '/app/'
+  fullPaths: '/' | '/auth' | '/chat' | '/app/flashcards' | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/chat' | '/app'
-  id: '__root__' | '/' | '/auth' | '/chat' | '/app/'
+  to: '/' | '/auth' | '/chat' | '/app/flashcards' | '/app'
+  id: '__root__' | '/' | '/auth' | '/chat' | '/app/flashcards' | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   ChatRoute: typeof ChatRoute
+  AppFlashcardsRoute: typeof AppFlashcardsRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
@@ -99,6 +109,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/flashcards': {
+      id: '/app/flashcards'
+      path: '/app/flashcards'
+      fullPath: '/app/flashcards'
+      preLoaderRoute: typeof AppFlashcardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -106,6 +123,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   ChatRoute: ChatRoute,
+  AppFlashcardsRoute: AppFlashcardsRoute,
   AppIndexRoute: AppIndexRoute,
 }
 export const routeTree = rootRouteImport
