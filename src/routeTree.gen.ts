@@ -12,6 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppQuizRouteImport } from './routes/app.quiz'
+import { Route as AppPdfStudyRouteImport } from './routes/app.pdf-study'
+import { Route as AppFlashcardsRouteImport } from './routes/app.flashcards'
 
 const ChatRoute = ChatRouteImport.update({
   id: '/chat',
@@ -28,35 +32,93 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/app/',
+  path: '/app/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppQuizRoute = AppQuizRouteImport.update({
+  id: '/app/quiz',
+  path: '/app/quiz',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppPdfStudyRoute = AppPdfStudyRouteImport.update({
+  id: '/app/pdf-study',
+  path: '/app/pdf-study',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppFlashcardsRoute = AppFlashcardsRouteImport.update({
+  id: '/app/flashcards',
+  path: '/app/flashcards',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
+  '/app/flashcards': typeof AppFlashcardsRoute
+  '/app/pdf-study': typeof AppPdfStudyRoute
+  '/app/quiz': typeof AppQuizRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
+  '/app/flashcards': typeof AppFlashcardsRoute
+  '/app/pdf-study': typeof AppPdfStudyRoute
+  '/app/quiz': typeof AppQuizRoute
+  '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
+  '/app/flashcards': typeof AppFlashcardsRoute
+  '/app/pdf-study': typeof AppPdfStudyRoute
+  '/app/quiz': typeof AppQuizRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/chat'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/chat'
+    | '/app/flashcards'
+    | '/app/pdf-study'
+    | '/app/quiz'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/chat'
-  id: '__root__' | '/' | '/auth' | '/chat'
+  to:
+    | '/'
+    | '/auth'
+    | '/chat'
+    | '/app/flashcards'
+    | '/app/pdf-study'
+    | '/app/quiz'
+    | '/app'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/chat'
+    | '/app/flashcards'
+    | '/app/pdf-study'
+    | '/app/quiz'
+    | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   ChatRoute: typeof ChatRoute
+  AppFlashcardsRoute: typeof AppFlashcardsRoute
+  AppPdfStudyRoute: typeof AppPdfStudyRoute
+  AppQuizRoute: typeof AppQuizRoute
+  AppIndexRoute: typeof AppIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +144,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/': {
+      id: '/app/'
+      path: '/app'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app/quiz': {
+      id: '/app/quiz'
+      path: '/app/quiz'
+      fullPath: '/app/quiz'
+      preLoaderRoute: typeof AppQuizRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app/pdf-study': {
+      id: '/app/pdf-study'
+      path: '/app/pdf-study'
+      fullPath: '/app/pdf-study'
+      preLoaderRoute: typeof AppPdfStudyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app/flashcards': {
+      id: '/app/flashcards'
+      path: '/app/flashcards'
+      fullPath: '/app/flashcards'
+      preLoaderRoute: typeof AppFlashcardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,17 +179,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   ChatRoute: ChatRoute,
+  AppFlashcardsRoute: AppFlashcardsRoute,
+  AppPdfStudyRoute: AppPdfStudyRoute,
+  AppQuizRoute: AppQuizRoute,
+  AppIndexRoute: AppIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

@@ -2,3 +2,6 @@ project_id = "rlvtagcgfxukdghsyuip"
 
 [functions.chat]
 verify_jwt = false
+
+[functions.generate-study]
+verify_jwt = false

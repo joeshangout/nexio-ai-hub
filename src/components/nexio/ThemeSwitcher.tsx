@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Palette } from "lucide-react";
 
 const THEMES = [
-  { id: "", label: "Dark Glass", swatch: "linear-gradient(135deg,#3b82f6,#a855f7)" },
-  { id: "theme-bold-white", label: "Bold White", swatch: "linear-gradient(135deg,#ffffff,#e9d5ff)" },
+  { id: "", label: "Apple Dark", swatch: "linear-gradient(135deg,#000,#222)" },
+  { id: "theme-bold-white", label: "Bold White", swatch: "linear-gradient(135deg,#fff,#e9d5ff)" },
   { id: "theme-sunset", label: "Sunset", swatch: "linear-gradient(135deg,#f59e0b,#ec4899)" },
   { id: "theme-emerald", label: "Emerald", swatch: "linear-gradient(135deg,#10b981,#06b6d4)" },
 ];
