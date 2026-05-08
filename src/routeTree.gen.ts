@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppQuizRouteImport } from './routes/app.quiz'
+import { Route as AppPdfStudyRouteImport } from './routes/app.pdf-study'
 import { Route as AppFlashcardsRouteImport } from './routes/app.flashcards'
 
 const ChatRoute = ChatRouteImport.update({
@@ -41,6 +42,11 @@ const AppQuizRoute = AppQuizRouteImport.update({
   path: '/app/quiz',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppPdfStudyRoute = AppPdfStudyRouteImport.update({
+  id: '/app/pdf-study',
+  path: '/app/pdf-study',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppFlashcardsRoute = AppFlashcardsRouteImport.update({
   id: '/app/flashcards',
   path: '/app/flashcards',
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
   '/app/flashcards': typeof AppFlashcardsRoute
+  '/app/pdf-study': typeof AppPdfStudyRoute
   '/app/quiz': typeof AppQuizRoute
   '/app/': typeof AppIndexRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
   '/app/flashcards': typeof AppFlashcardsRoute
+  '/app/pdf-study': typeof AppPdfStudyRoute
   '/app/quiz': typeof AppQuizRoute
   '/app': typeof AppIndexRoute
 }
@@ -69,20 +77,36 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
   '/app/flashcards': typeof AppFlashcardsRoute
+  '/app/pdf-study': typeof AppPdfStudyRoute
   '/app/quiz': typeof AppQuizRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/chat' | '/app/flashcards' | '/app/quiz' | '/app/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/chat'
+    | '/app/flashcards'
+    | '/app/pdf-study'
+    | '/app/quiz'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/chat' | '/app/flashcards' | '/app/quiz' | '/app'
+  to:
+    | '/'
+    | '/auth'
+    | '/chat'
+    | '/app/flashcards'
+    | '/app/pdf-study'
+    | '/app/quiz'
+    | '/app'
   id:
     | '__root__'
     | '/'
     | '/auth'
     | '/chat'
     | '/app/flashcards'
+    | '/app/pdf-study'
     | '/app/quiz'
     | '/app/'
   fileRoutesById: FileRoutesById
@@ -92,6 +116,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ChatRoute: typeof ChatRoute
   AppFlashcardsRoute: typeof AppFlashcardsRoute
+  AppPdfStudyRoute: typeof AppPdfStudyRoute
   AppQuizRoute: typeof AppQuizRoute
   AppIndexRoute: typeof AppIndexRoute
 }
@@ -133,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppQuizRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/pdf-study': {
+      id: '/app/pdf-study'
+      path: '/app/pdf-study'
+      fullPath: '/app/pdf-study'
+      preLoaderRoute: typeof AppPdfStudyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app/flashcards': {
       id: '/app/flashcards'
       path: '/app/flashcards'
@@ -148,6 +180,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ChatRoute: ChatRoute,
   AppFlashcardsRoute: AppFlashcardsRoute,
+  AppPdfStudyRoute: AppPdfStudyRoute,
   AppQuizRoute: AppQuizRoute,
   AppIndexRoute: AppIndexRoute,
 }
