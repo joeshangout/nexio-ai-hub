@@ -13,6 +13,7 @@ import { Route as ChatRouteImport } from './routes/chat'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppQuizRouteImport } from './routes/app.quiz'
 import { Route as AppFlashcardsRouteImport } from './routes/app.flashcards'
 
 const ChatRoute = ChatRouteImport.update({
@@ -35,6 +36,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/app/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppQuizRoute = AppQuizRouteImport.update({
+  id: '/app/quiz',
+  path: '/app/quiz',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppFlashcardsRoute = AppFlashcardsRouteImport.update({
   id: '/app/flashcards',
   path: '/app/flashcards',
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
   '/app/flashcards': typeof AppFlashcardsRoute
+  '/app/quiz': typeof AppQuizRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
   '/app/flashcards': typeof AppFlashcardsRoute
+  '/app/quiz': typeof AppQuizRoute
   '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
@@ -61,14 +69,22 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
   '/app/flashcards': typeof AppFlashcardsRoute
+  '/app/quiz': typeof AppQuizRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/chat' | '/app/flashcards' | '/app/'
+  fullPaths: '/' | '/auth' | '/chat' | '/app/flashcards' | '/app/quiz' | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/chat' | '/app/flashcards' | '/app'
-  id: '__root__' | '/' | '/auth' | '/chat' | '/app/flashcards' | '/app/'
+  to: '/' | '/auth' | '/chat' | '/app/flashcards' | '/app/quiz' | '/app'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/chat'
+    | '/app/flashcards'
+    | '/app/quiz'
+    | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -76,6 +92,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ChatRoute: typeof ChatRoute
   AppFlashcardsRoute: typeof AppFlashcardsRoute
+  AppQuizRoute: typeof AppQuizRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
@@ -109,6 +126,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/quiz': {
+      id: '/app/quiz'
+      path: '/app/quiz'
+      fullPath: '/app/quiz'
+      preLoaderRoute: typeof AppQuizRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app/flashcards': {
       id: '/app/flashcards'
       path: '/app/flashcards'
@@ -124,6 +148,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ChatRoute: ChatRoute,
   AppFlashcardsRoute: AppFlashcardsRoute,
+  AppQuizRoute: AppQuizRoute,
   AppIndexRoute: AppIndexRoute,
 }
 export const routeTree = rootRouteImport
