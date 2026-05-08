@@ -37,43 +37,44 @@
   --font-mono: var(--font-mono);
 }
 
-/* Default: Dark Glass theme */
+/* Default: Apple Dark Glass — pure black, bold white, metamorphic glass */
 :root {
-  --radius: 1rem;
-  --background: oklch(0.14 0.03 270);
-  --foreground: oklch(0.98 0.01 250);
-  --card: oklch(0.18 0.04 270 / 60%);
-  --card-foreground: oklch(0.98 0.01 250);
-  --popover: oklch(0.16 0.04 270);
-  --popover-foreground: oklch(0.98 0.01 250);
-  --primary: oklch(0.7 0.22 280);
-  --primary-foreground: oklch(0.1 0.02 270);
-  --secondary: oklch(0.25 0.05 270 / 60%);
-  --secondary-foreground: oklch(0.98 0.01 250);
-  --muted: oklch(0.22 0.03 270 / 50%);
-  --muted-foreground: oklch(0.7 0.03 260);
-  --accent: oklch(0.7 0.2 250);
-  --accent-foreground: oklch(0.1 0.02 270);
-  --destructive: oklch(0.65 0.25 25);
-  --destructive-foreground: oklch(0.98 0 0);
+  --radius: 1.25rem;
+  --background: oklch(0 0 0);
+  --foreground: oklch(1 0 0);
+  --card: oklch(1 0 0 / 5%);
+  --card-foreground: oklch(1 0 0);
+  --popover: oklch(0.08 0 0);
+  --popover-foreground: oklch(1 0 0);
+  --primary: oklch(1 0 0);
+  --primary-foreground: oklch(0 0 0);
+  --secondary: oklch(1 0 0 / 8%);
+  --secondary-foreground: oklch(1 0 0);
+  --muted: oklch(1 0 0 / 5%);
+  --muted-foreground: oklch(0.7 0 0);
+  --accent: oklch(0.72 0.2 245);
+  --accent-foreground: oklch(0 0 0);
+  --destructive: oklch(0.7 0.22 25);
+  --destructive-foreground: oklch(1 0 0);
   --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 8%);
-  --ring: oklch(0.7 0.22 280);
+  --input: oklch(1 0 0 / 6%);
+  --ring: oklch(1 0 0 / 40%);
   --electric: oklch(0.72 0.2 245);
   --neon: oklch(0.7 0.27 305);
 
-  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
 
-  --gradient-primary: linear-gradient(135deg, oklch(0.72 0.2 245), oklch(0.7 0.27 305));
-  --gradient-glow: radial-gradient(60% 60% at 50% 0%, oklch(0.72 0.2 245 / 35%), transparent 70%);
-  --gradient-mesh: radial-gradient(40% 40% at 20% 10%, oklch(0.72 0.2 245 / 25%), transparent 70%),
-                   radial-gradient(35% 35% at 80% 20%, oklch(0.7 0.27 305 / 25%), transparent 70%),
-                   radial-gradient(50% 50% at 50% 100%, oklch(0.72 0.2 245 / 15%), transparent 70%);
-  --shadow-glow: 0 0 40px oklch(0.72 0.2 245 / 35%);
-  --shadow-neon: 0 0 50px oklch(0.7 0.27 305 / 40%);
-  --shadow-elegant: 0 20px 60px -20px oklch(0 0 0 / 60%);
+  --gradient-primary: linear-gradient(135deg, oklch(1 0 0), oklch(0.85 0 0));
+  --gradient-accent: linear-gradient(135deg, oklch(0.72 0.2 245), oklch(0.7 0.27 305));
+  --gradient-glow: radial-gradient(60% 60% at 50% 0%, oklch(1 0 0 / 12%), transparent 70%);
+  --gradient-mesh: radial-gradient(50% 50% at 15% 10%, oklch(1 0 0 / 6%), transparent 70%),
+                   radial-gradient(40% 40% at 85% 20%, oklch(0.72 0.2 245 / 10%), transparent 70%),
+                   radial-gradient(45% 45% at 50% 100%, oklch(0.7 0.27 305 / 8%), transparent 70%);
+  --shadow-glow: 0 0 60px oklch(1 0 0 / 12%);
+  --shadow-neon: 0 0 50px oklch(0.7 0.27 305 / 30%);
+  --shadow-elegant: 0 30px 80px -20px oklch(0 0 0 / 80%), 0 0 0 1px oklch(1 0 0 / 6%);
   --glass-bg: oklch(1 0 0 / 4%);
   --glass-border: oklch(1 0 0 / 10%);
 }
