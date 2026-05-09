@@ -1,11 +1,24 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Plus, Send, Trash2, Loader2, Sparkles, MessageSquare, History } from "lucide-react";
+import {
+  Plus,
+  Send,
+  Trash2,
+  Loader2,
+  Sparkles,
+  MessageSquare,
+  History,
+  Copy,
+  Check,
+  RefreshCw,
+  Square,
+} from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { streamChat } from "@/lib/chat-stream";
 import { AppShell } from "@/components/nexio/AppShell";
+import { toast } from "sonner";
 
 type Conversation = { id: string; title: string; updated_at: string };
 type Message = { id: string; role: "user" | "assistant" | "system"; content: string };
@@ -31,6 +44,7 @@ function ChatPage() {
   const [error, setError] = useState<string | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth" });
@@ -89,28 +103,10 @@ function ChatPage() {
     }
   };
 
-  const send = async () => {
-    const text = input.trim();
-    if (!text || sending || !user) return;
+  const runStream = async (convoId: string, content: string) => {
     setError(null);
-    let convoId = activeId;
-    if (!convoId) {
-      const { data } = await supabase
-        .from("conversations")
-        .insert({ user_id: user.id, title: "New chat" })
-        .select("id,title,updated_at")
-        .single();
-      if (!data) return;
-      convoId = data.id;
-      setConversations((prev) => [data as Conversation, ...prev]);
-      setActiveId(convoId);
-    }
-
-    const userMsg: Message = { id: `tmp-${Date.now()}`, role: "user", content: text };
-    setMessages((prev) => [...prev, userMsg]);
-    setInput("");
     setSending(true);
-
+    abortRef.current = new AbortController();
     let buf = "";
     const upsert = (chunk: string) => {
       buf += chunk;
@@ -124,17 +120,67 @@ function ChatPage() {
     };
 
     try {
-      await streamChat({ conversationId: convoId!, content: text, onDelta: upsert });
+      await streamChat({
+        conversationId: convoId,
+        content,
+        onDelta: upsert,
+        signal: abortRef.current.signal,
+      });
       const { data } = await supabase
         .from("conversations")
         .select("id,title,updated_at")
         .order("updated_at", { ascending: false });
       if (data) setConversations(data as Conversation[]);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to send");
+      if ((e as Error)?.name === "AbortError") {
+        toast.message("Stopped generating");
+      } else {
+        setError(e instanceof Error ? e.message : "Failed to send");
+      }
     } finally {
       setSending(false);
+      abortRef.current = null;
     }
+  };
+
+  const send = async () => {
+    const text = input.trim();
+    if (!text || sending || !user) return;
+    let convoId = activeId;
+    if (!convoId) {
+      const { data } = await supabase
+        .from("conversations")
+        .insert({ user_id: user.id, title: "New chat" })
+        .select("id,title,updated_at")
+        .single();
+      if (!data) return;
+      convoId = data.id;
+      setConversations((prev) => [data as Conversation, ...prev]);
+      setActiveId(convoId);
+    }
+    const userMsg: Message = { id: `tmp-${Date.now()}`, role: "user", content: text };
+    setMessages((prev) => [...prev, userMsg]);
+    setInput("");
+    await runStream(convoId!, text);
+  };
+
+  const stop = () => abortRef.current?.abort();
+
+  const regenerate = async () => {
+    if (!activeId || sending) return;
+    // find last user message
+    let lastUserIdx = -1;
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === "user") {
+        lastUserIdx = i;
+        break;
+      }
+    }
+    if (lastUserIdx === -1) return;
+    const lastUser = messages[lastUserIdx];
+    // drop trailing assistant
+    setMessages((prev) => prev.slice(0, lastUserIdx + 1));
+    await runStream(activeId, lastUser.content);
   };
 
   const activeTitle = useMemo(
@@ -199,6 +245,9 @@ function ChatPage() {
     </div>
   );
 
+  const lastMsg = messages[messages.length - 1];
+  const canRegen = !sending && lastMsg?.role === "assistant";
+
   return (
     <AppShell
       title={activeTitle}
@@ -213,7 +262,6 @@ function ChatPage() {
       }
       contentClassName="flex-1 min-h-0 flex"
     >
-      {/* Secondary history panel */}
       <aside
         className={`absolute right-0 top-[57px] z-20 h-[calc(100%-57px)] w-72 transform border-l border-white/10 bg-black/80 backdrop-blur-2xl transition-transform duration-300 md:static md:h-auto md:translate-x-0 ${
           historyOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"
@@ -226,7 +274,7 @@ function ChatPage() {
         <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-6 md:px-8">
           <div className="mx-auto flex max-w-3xl flex-col gap-6">
             {messages.length === 0 && !sending && (
-              <div className="mt-12 text-center">
+              <div className="mt-12 text-center animate-fade-in">
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-black shadow-glow">
                   <Sparkles className="h-6 w-6" />
                 </div>
@@ -258,6 +306,25 @@ function ChatPage() {
         )}
 
         <div className="border-t border-white/10 px-4 py-4 md:px-8">
+          {/* action row */}
+          <div className="mx-auto mb-2 flex max-w-3xl items-center justify-center gap-2">
+            {sending ? (
+              <button
+                onClick={stop}
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium hover:bg-white/10"
+              >
+                <Square className="h-3 w-3" /> Stop generating
+              </button>
+            ) : canRegen ? (
+              <button
+                onClick={regenerate}
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium hover:bg-white/10"
+              >
+                <RefreshCw className="h-3 w-3" /> Regenerate
+              </button>
+            ) : null}
+          </div>
+
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -309,34 +376,55 @@ function Bubble({
   content: string;
   pending?: boolean;
 }) {
+  const [copied, setCopied] = useState(false);
   const isUser = role === "user";
+
+  const copy = async () => {
+    if (!content) return;
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {}
+  };
+
   return (
-    <div className={`flex gap-3 ${isUser ? "justify-end" : "justify-start"}`}>
+    <div className={`group flex gap-3 animate-fade-in ${isUser ? "justify-end" : "justify-start"}`}>
       {!isUser && (
         <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white text-black shadow-glow">
           <Sparkles className="h-4 w-4" />
         </div>
       )}
-      <div
-        className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-          isUser
-            ? "bg-white text-black font-medium"
-            : "glass border border-white/10 text-foreground"
-        }`}
-      >
-        {pending ? (
-          <span className="inline-flex items-center gap-1 text-muted-foreground">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-current" />
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-current [animation-delay:120ms]" />
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-current [animation-delay:240ms]" />
-          </span>
-        ) : isUser ? (
-          <span className="whitespace-pre-wrap">{content}</span>
-        ) : (
-          <div className="prose prose-sm prose-invert max-w-none prose-pre:bg-black/60 prose-pre:border prose-pre:border-white/10 prose-code:text-foreground">
-            <ReactMarkdown>{content}</ReactMarkdown>
-            {content && <span className="animate-caret">▍</span>}
-          </div>
+      <div className="flex max-w-[85%] flex-col gap-1.5">
+        <div
+          className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+            isUser
+              ? "bg-white text-black font-medium"
+              : "glass border border-white/10 text-foreground"
+          }`}
+        >
+          {pending ? (
+            <span className="inline-flex items-center gap-1 text-muted-foreground">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-current" />
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-current [animation-delay:120ms]" />
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-current [animation-delay:240ms]" />
+            </span>
+          ) : isUser ? (
+            <span className="whitespace-pre-wrap">{content}</span>
+          ) : (
+            <div className="prose prose-sm prose-invert max-w-none prose-pre:bg-black/60 prose-pre:border prose-pre:border-white/10 prose-code:text-foreground">
+              <ReactMarkdown>{content}</ReactMarkdown>
+            </div>
+          )}
+        </div>
+        {!pending && content && !isUser && (
+          <button
+            onClick={copy}
+            className="self-start inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] text-muted-foreground opacity-0 transition hover:bg-white/10 hover:text-foreground group-hover:opacity-100"
+          >
+            {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+            {copied ? "Copied" : "Copy"}
+          </button>
         )}
       </div>
     </div>
