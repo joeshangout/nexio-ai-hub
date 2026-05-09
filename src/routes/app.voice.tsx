@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useConversation } from "@elevenlabs/react";
+import { useConversation, ConversationProvider } from "@elevenlabs/react";
 import { Mic, MicOff, Loader2, Volume2, AlertCircle } from "lucide-react";
 import { AppShell } from "@/components/nexio/AppShell";
 import { useAuth } from "@/lib/auth-context";
