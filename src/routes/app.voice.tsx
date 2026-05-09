@@ -7,8 +7,16 @@ import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/voice")({
-  component: VoicePage,
+  component: VoicePageWrapper,
 });
+
+function VoicePageWrapper() {
+  return (
+    <ConversationProvider>
+      <VoicePage />
+    </ConversationProvider>
+  );
+}
 
 const AGENT_ID = "agent_3801kr2bse75fb8v64bwgccr1jam";
 
