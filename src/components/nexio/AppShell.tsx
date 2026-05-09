@@ -13,6 +13,7 @@ import {
   CalendarDays,
   Wand2,
   Lock,
+  Mic,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { ThemeSwitcher } from "@/components/nexio/ThemeSwitcher";
@@ -29,6 +30,7 @@ const PRIMARY: Item[] = [
   { label: "Flashcards", to: "/app/flashcards", icon: Layers },
   { label: "Quiz Generator", to: "/app/quiz", icon: ListChecks },
   { label: "PDF Study", to: "/app/pdf-study", icon: FileText },
+  { label: "Nexio Voice", to: "/app/voice", icon: Mic },
 ];
 
 const SOON: Item[] = [
