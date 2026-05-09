@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppVoiceRouteImport } from './routes/app.voice'
+import { Route as AppSocialRouteImport } from './routes/app.social'
 import { Route as AppQuizRouteImport } from './routes/app.quiz'
 import { Route as AppPdfStudyRouteImport } from './routes/app.pdf-study'
 import { Route as AppFlashcardsRouteImport } from './routes/app.flashcards'
@@ -43,6 +44,11 @@ const AppVoiceRoute = AppVoiceRouteImport.update({
   path: '/app/voice',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppSocialRoute = AppSocialRouteImport.update({
+  id: '/app/social',
+  path: '/app/social',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppQuizRoute = AppQuizRouteImport.update({
   id: '/app/quiz',
   path: '/app/quiz',
@@ -66,6 +72,7 @@ export interface FileRoutesByFullPath {
   '/app/flashcards': typeof AppFlashcardsRoute
   '/app/pdf-study': typeof AppPdfStudyRoute
   '/app/quiz': typeof AppQuizRoute
+  '/app/social': typeof AppSocialRoute
   '/app/voice': typeof AppVoiceRoute
   '/app/': typeof AppIndexRoute
 }
@@ -76,6 +83,7 @@ export interface FileRoutesByTo {
   '/app/flashcards': typeof AppFlashcardsRoute
   '/app/pdf-study': typeof AppPdfStudyRoute
   '/app/quiz': typeof AppQuizRoute
+  '/app/social': typeof AppSocialRoute
   '/app/voice': typeof AppVoiceRoute
   '/app': typeof AppIndexRoute
 }
@@ -87,6 +95,7 @@ export interface FileRoutesById {
   '/app/flashcards': typeof AppFlashcardsRoute
   '/app/pdf-study': typeof AppPdfStudyRoute
   '/app/quiz': typeof AppQuizRoute
+  '/app/social': typeof AppSocialRoute
   '/app/voice': typeof AppVoiceRoute
   '/app/': typeof AppIndexRoute
 }
@@ -99,6 +108,7 @@ export interface FileRouteTypes {
     | '/app/flashcards'
     | '/app/pdf-study'
     | '/app/quiz'
+    | '/app/social'
     | '/app/voice'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
@@ -109,6 +119,7 @@ export interface FileRouteTypes {
     | '/app/flashcards'
     | '/app/pdf-study'
     | '/app/quiz'
+    | '/app/social'
     | '/app/voice'
     | '/app'
   id:
@@ -119,6 +130,7 @@ export interface FileRouteTypes {
     | '/app/flashcards'
     | '/app/pdf-study'
     | '/app/quiz'
+    | '/app/social'
     | '/app/voice'
     | '/app/'
   fileRoutesById: FileRoutesById
@@ -130,6 +142,7 @@ export interface RootRouteChildren {
   AppFlashcardsRoute: typeof AppFlashcardsRoute
   AppPdfStudyRoute: typeof AppPdfStudyRoute
   AppQuizRoute: typeof AppQuizRoute
+  AppSocialRoute: typeof AppSocialRoute
   AppVoiceRoute: typeof AppVoiceRoute
   AppIndexRoute: typeof AppIndexRoute
 }
@@ -171,6 +184,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppVoiceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/social': {
+      id: '/app/social'
+      path: '/app/social'
+      fullPath: '/app/social'
+      preLoaderRoute: typeof AppSocialRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app/quiz': {
       id: '/app/quiz'
       path: '/app/quiz'
@@ -202,9 +222,20 @@ const rootRouteChildren: RootRouteChildren = {
   AppFlashcardsRoute: AppFlashcardsRoute,
   AppPdfStudyRoute: AppPdfStudyRoute,
   AppQuizRoute: AppQuizRoute,
+  AppSocialRoute: AppSocialRoute,
   AppVoiceRoute: AppVoiceRoute,
   AppIndexRoute: AppIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
