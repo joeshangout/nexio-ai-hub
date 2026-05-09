@@ -112,7 +112,7 @@ function VoicePage() {
             />
             <div
               className={`relative flex h-32 w-32 items-center justify-center rounded-full bg-white text-black shadow-glow transition ${
-                isConnected ? "animate-pulse-soft" : ""
+                isConnected ? "animate-pulse" : ""
               }`}
             >
               {isSpeaking ? (
