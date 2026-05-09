@@ -1,14 +1,22 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useConversation } from "@elevenlabs/react";
+import { useConversation, ConversationProvider } from "@elevenlabs/react";
 import { Mic, MicOff, Loader2, Volume2, AlertCircle } from "lucide-react";
 import { AppShell } from "@/components/nexio/AppShell";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/voice")({
-  component: VoicePage,
+  component: VoicePageWrapper,
 });
+
+function VoicePageWrapper() {
+  return (
+    <ConversationProvider>
+      <VoicePage />
+    </ConversationProvider>
+  );
+}
 
 const AGENT_ID = "agent_3801kr2bse75fb8v64bwgccr1jam";
 
